@@ -3,6 +3,8 @@ import { Box, TextField, Chip, Typography, Divider, Button } from '@mui/material
 import { useState } from 'react';
 import ChipComponent from './Chip';
 import { useParams } from 'react-router-dom';
+const apiUrl = import.meta.env.VITE_API_URL;
+
 
 export default function AddPlaylist() {
   const [title, setTitle] = useState("");
@@ -12,7 +14,7 @@ export default function AddPlaylist() {
   const addPlaylistFunc = async () => {
     console.log("Clicked");
     try {
-      const response = await fetch("http://localhost:3000/CreatePlaylist/" + title + "/" + params.id)
+      const response = await fetch(`${apiUrl}/CreatePlaylist/${title}/${params.id}`)
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }

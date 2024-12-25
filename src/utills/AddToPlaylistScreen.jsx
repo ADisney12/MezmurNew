@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import ChipComponent from './Chip';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export default function AddToPlaylist({VideoData, index}) {
     const [Stateindex, SetIndex] = useState(0);
@@ -37,7 +38,7 @@ export default function AddToPlaylist({VideoData, index}) {
 
     const fetchData = async () => {
         try {
-            const response = await fetch(`http://localhost:3000/FetchPlaylist/${params.id}`);
+            const response = await fetch(`${apiUrl}/FetchPlaylist/${params.id}`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -57,7 +58,7 @@ export default function AddToPlaylist({VideoData, index}) {
     const AddToPlaylistRequest = async () => {
         try {
             if (data && data[Stateindex]) {
-                const response = await axios.post('http://localhost:3000/AddToPlaylist', {
+                const response = await axios.post(`${apiUrl}/AddToPlaylist`, {
                     Playlist: data[Stateindex].Name,
                     userId: params.id,
                     SongName: SongData["title"],
