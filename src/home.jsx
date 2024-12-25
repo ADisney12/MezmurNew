@@ -1,14 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Container, TextField, Box, Button, Card, Typography, styled, createTheme, CardContent, CardMedia } from "@mui/material";
-import SearchIcon from '@mui/icons-material/Search';
-import Stack from '@mui/material/Stack';
-import PlayCircleIcon from '@mui/icons-material/PlayCircle';
-import ToolBar from './appBar';
-import PauseIcon from '@mui/icons-material/Pause';
-import ReactPlayer from 'react-player';
-import AddToPlaylist from './utills/AddToPlaylistScreen';
-import AddIcon from '@mui/icons-material/AddCircle';
-import CancelIcon from '@mui/icons-material/Cancel';
+
 import { useParams, useNavigate } from "react-router-dom";
 
 import background from './assets/openart-image_c1h-whTq_1735019539338_raw (3)_enhanced.jpg';
