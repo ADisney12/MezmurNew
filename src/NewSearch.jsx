@@ -162,9 +162,9 @@ export default function Search() {
   return (
     <div>
       <Container maxWidth={false} maxHeight={false} sx={{ opacity: AddToPlaylistScreen ? 0.5 : 1, backgroundColor: "#D2FFFC", height: !loading ? "100%" : "100vh" }}>
-        <ToolBar />
-        <Stack spacing={2}>
-          <Card sx={{ boxShadow: '3px 3px 9px #BFC6CD', width: "80%", marginLeft: "10%", borderRadius: 10, marginLeft: 6, paddingLeft: 4, marginTop: 15 }}>
+        <ToolBar/>
+      
+          <Card sx={{ boxShadow: '3px 3px 9px #BFC6CD', width: "80%", marginLeft: "10%", borderRadius: 10, marginLeft: 6, paddingLeft: 4, marginTop: "10%" }}>
             <Typography height={30} gutterBottom variant="h3" component="div" class="Ysabeau">
               Songs
             </Typography>
@@ -199,7 +199,7 @@ export default function Search() {
               />
             </Box>
           )}
-        </Stack>
+      
       </Container>
 
       {
