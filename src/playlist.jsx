@@ -119,9 +119,11 @@ export default function Playlist() {
 
   return (
     <div>
+          <Container maxWidth={false} sx={{backgroundColor:"#D2FFFC", width: "100%", height: "100vh", padding: 0}}>
+
      <ToolBar/>
 
-        <Container maxWidth={false} sx={{backgroundColor:"#DDF2ED ", width: "100%",  height: "100%"}}>
+       
 
         {playerUrl && (
                     <Box sx={{ width: "100%" }}>
