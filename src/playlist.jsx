@@ -6,7 +6,7 @@ import { GlobalContext } from "./GlobalData";
 import ToolBar from "./appBar"
 import ReactPlayer from 'react-player';
 import { Button, Card, CardActions, CardContent, CardMedia, Typography, styled, createTheme, Container, AppBar, TextField, CircularProgress, Stack, Box} from "@mui/material";
-
+const apiUrl = import.meta.env.VITE_API_URL;
 const StyledPlayCircleIcon = styled(PlayCircleIcon)(({ theme }) => ({
   borderRadius: "25px",
   transition: "transform 0.10s ease-in-out",

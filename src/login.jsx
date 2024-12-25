@@ -8,6 +8,8 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { NavLink, useNavigate } from "react-router-dom";
+const apiUrl = import.meta.env.VITE_API_URL;
+
 import { useEffect, useState, useCallback, useRef } from "react";
 import OptionalText from "./OptionalText";
 
@@ -48,7 +50,7 @@ export default function SignIn() {
     const handleClick = async (event) => {
         event.preventDefault();
         try {
-            fetch("http://localhost:3000/CheckUser/" + username + "/" + password)
+            fetch(`${apiUrl}/CheckUser/${username}/${password}`)
             .then(res => res.json())
             .then(res=> {
                 if(res.status == "success"){

@@ -7,6 +7,7 @@ import AddPlaylist from "./utills/AddPlaylistsScreen";
 import { useParams, useNavigate } from "react-router-dom";
 import CancelIcon from '@mui/icons-material/Cancel';
 import { GlobalContext } from "./GlobalData";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -53,7 +54,7 @@ export default function home(){
   
   const fetchData = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/FetchPlaylist/${params.id}`);
+      const response = await fetch(`${apiUrl}/FetchPlaylist/${params.id}`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -68,10 +69,12 @@ export default function home(){
   };
 
   useEffect(() => {
+    console.log(apiUrl);
     fetchData();
   }, []); 
 
   useEffect(() => {
+    console.log(apiUrl);
     console.log(GlobalData);
   }, [GlobalData]); 
 
