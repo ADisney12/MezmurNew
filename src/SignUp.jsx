@@ -8,6 +8,8 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { useNavigate } from "react-router-dom";
+const apiUrl = import.meta.env.VITE_API_URL;
+
 import { useEffect, useState, useCallback, useRef } from "react";
 
 
@@ -36,7 +38,7 @@ export default function SignUp() {
         event.preventDefault();
         console.log(username, password)
         try {
-            fetch("http://localhost:3000/CreateUser/" + username + "/" + password)
+            fetch(`${apiUrl}/CreateUser/${username}/${password}`)
             .then(res => res.json())
             .then(res=> {
                 console.log(res)
