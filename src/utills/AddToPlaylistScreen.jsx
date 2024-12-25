@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Typography, Divider, Button, CircularProgress } from '@mui/material';
+import { Box, Typography, Divider, Button, CircularProgress, Chip } from '@mui/material';
 import { useState, useEffect } from 'react';
 import ChipComponent from './Chip';
 import { useParams } from 'react-router-dom';
@@ -12,12 +12,14 @@ export default function AddToPlaylist({VideoData, index}) {
     const [selectedChip, setSelectedChip] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    let SongData = VideoData["song"];
+    let SongData = VideoData;
     let params = useParams();
 
     const handleChipClick = (index) => {
         setSelectedChip(index);
         SetIndex(index);
+       
+       
     };
 
     const MapPlaylists = () => {
@@ -26,12 +28,24 @@ export default function AddToPlaylist({VideoData, index}) {
         }
         return (
             data.map((e, index) => (
-                <ChipComponent
+                <Button
                     key={index}
                     label={e.Name}
-                    clicked={selectedChip === index}
-                    handleClick={() => handleChipClick(index)}
-                />
+                    onClick={() => handleChipClick(index)}
+                    variant="outlined"
+                    sx={{
+                        backgroundColor: selectedChip === index ? "#D8E5FF" : "#36425B",
+                        marginLeft: "4%",
+                        marginTop: "3%", 
+                        fontSize: "2em",
+                        height: "auto",
+                        fontFamily: "Ysabeau",
+                        color: selectedChip === index ? "#000000" : "white",
+                        borderColor: "#C1D5FF"
+                    }}
+                >
+                    {e.Name}
+                </Button>
             ))
         );
     };
@@ -53,6 +67,7 @@ export default function AddToPlaylist({VideoData, index}) {
 
     useEffect(() => {
         fetchData();
+        console.log(SongData);
     }, [params.id]);
 
     const AddToPlaylistRequest = async () => {

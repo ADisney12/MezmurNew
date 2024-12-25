@@ -63,6 +63,10 @@ export default function Search() {
     GetData();
   }, []);
 
+  useEffect(() => {
+    console.log(selectedSong);
+  }, [selectedSong]);
+
   const handleCardClick = (index) => {
     const videoId = data[index].url.split('v=')[1]?.split('&')[0];
     if (playIndex === index) {
