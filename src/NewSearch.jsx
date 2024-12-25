@@ -10,7 +10,7 @@ import AddToPlaylist from './utills/AddToPlaylistScreen';
 import AddIcon from '@mui/icons-material/AddCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useParams, useNavigate } from "react-router-dom";
-
+const apiUrl = import.meta.env.VITE_API_URL;
 
 
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -50,7 +50,7 @@ export default function Search() {
 
   const GetData = async () => {
     try {
-      const response = await fetch("http://localhost:3000/SearchVideo/" + params["SearchQuery"], { mode: 'cors' });
+      const response = await fetch(`${apiUrl}/SearchVideo/${params["SearchQuery"]}`, { mode: 'cors' });
       const result = await response.json();
       setData(result);
       setLoading(false);
