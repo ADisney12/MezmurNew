@@ -50,7 +50,7 @@ export default function Search() {
 
   const GetData = async () => {
     try {
-      const response = await fetch(`http://${apiUrl}/SearchVideo/${params["SearchQuery"]}`, { mode: 'cors' });
+      const response = await fetch(`${apiUrl}/SearchVideo/${params["SearchQuery"]}`, { mode: 'cors' });
       const result = await response.json();
       setData(result);
       setLoading(false);
