@@ -1,5 +1,6 @@
 import * as React from "react";
 import App from "./App.jsx";
+import { Analytics } from "@vercel/analytics/react"
 import Login from "./login.jsx";
 import SignUp from "./SignUp.jsx";
 import Search from "./NewSearch.jsx";
@@ -44,6 +45,7 @@ const AppWrapper = () => {
   return (
     <GlobalProvider> {/* No need to pass value prop */}
       <RouterProvider router={router} />
+      <Analytics />
     </GlobalProvider>
   );
 };
