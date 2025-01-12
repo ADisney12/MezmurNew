@@ -91,7 +91,7 @@ const ChangeSceenState = () => {
     }
     return (
       Data.map((e, index) => (
-      <StyledCard onClick={ () => {PlaylistClicked(e.Name)}} sx={{ width: "10%",minHeight:"40%", marginRight:"2%", height: 200, display:"inline-block" }}>
+      <StyledCard onClick={ () => {PlaylistClicked(e.Name)}} sx={{ minWidth: "15%",minHeight:"40%", marginRight:"2%", height: 200, display:"inline-block" }}>
       
         <CardContent>
             <Typography gutterBottom variant="h5" component="div">

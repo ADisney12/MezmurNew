@@ -10,7 +10,9 @@ import AddToPlaylist from './utills/AddToPlaylistScreen';
 import AddIcon from '@mui/icons-material/AddCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useParams, useNavigate } from "react-router-dom";
+import VideoPlayer from './utills/VideoPlayer';
 const apiUrl = import.meta.env.VITE_API_URL;
+
 
 
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -50,7 +52,13 @@ export default function Search() {
 
   const GetData = async () => {
     try {
-      const response = await fetch(`${apiUrl}/SearchVideo/${params["SearchQuery"]}`, { mode: 'cors' });
+      const response = await fetch(`${apiUrl}/SearchVideo/${params["SearchQuery"]}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+    });
       const result = await response.json();
       setData(result);
       setLoading(false);
@@ -60,6 +68,7 @@ export default function Search() {
   };
 
   useEffect(() => {
+    console.log(playerState.playing);
     GetData();
   }, []);
 
@@ -67,7 +76,8 @@ export default function Search() {
     console.log(selectedSong);
   }, [selectedSong]);
 
-  const handleCardClick = (index) => {
+  const handleCardClick = (e, index) => {
+    setSelectedSong(e);
     const videoId = data[index].url.split('v=')[1]?.split('&')[0];
     if (playIndex === index) {
       setPlayerState(prevState => ({
@@ -75,10 +85,10 @@ export default function Search() {
         playing: false,
         played: playerState.played,
       }));
-      setPausedTimes({
-        ...pausedTimes,
+      setPausedTimes(prev => ({
+        ...prev,
         [index]: playerState.playedSeconds,
-      });
+      }));
       setPlayIndex(null);
     } else {
       setPlayIndex(index);
@@ -86,6 +96,7 @@ export default function Search() {
       setPlayerState({
         playing: true,
         played: pausedTimes[index] || 0,
+        playedSeconds: pausedTimes[index] || 0
       });
     }
   };
@@ -113,7 +124,7 @@ export default function Search() {
 
     return (
       data.map((e, index) => (
-        <StyledCard sx={{ display: 'flex', width: "50%", marginBottom: "10%", marginLeft: "10%" }} key={e.url}>
+        <StyledCard sx={{ display: 'flex', width: "50%", minWidth:"2in", marginBottom: "10%", marginLeft: "10%" }} key={e.url}>
           <Box sx={{ display: 'flex', flexDirection: 'column' }}>
             <CardContent sx={{ flex: '1 0 auto' }}>
               <Typography component="div" variant="h7">
@@ -126,7 +137,7 @@ export default function Search() {
             <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
               {playIndex === index ? (
                 <>
-                  <PauseIcon sx={{ fontSize: "50px" }} onClick={() => handleCardClick(index)} />
+                  <PauseIcon sx={{ fontSize: "50px" }} onClick={() => handleCardClick(e, index)} />
                   <AddIcon
                   onClick={() => ChangeSceenState(e, index)}
                     sx={{
@@ -137,7 +148,7 @@ export default function Search() {
                 </>
               ) : (
                 <>
-                  <StyledIcon sx={{ fontSize: "50px" }} onClick={() => handleCardClick(index)} />
+                  <StyledIcon sx={{ fontSize: "50px" }} onClick={() => handleCardClick(e, index)} />
                   <AddIcon
                     onClick={() => ChangeSceenState(e, index)} // Pass the song data when clicking Add
                     sx={{
@@ -172,7 +183,7 @@ export default function Search() {
           </Card>
           {playerUrl && (
             <Box sx={{ width: "100%" }}>
-              <ReactPlayer
+              {/* <ReactPlayer
                 url={playerUrl}
                 playing={playerState.playing}
                 controls
@@ -196,10 +207,21 @@ export default function Search() {
                     playing: true,
                   }));
                 }}
-              />
+              /> */}
             </Box>
           )}
-      
+
+{selectedSong != null && (
+        <div>
+
+            <VideoPlayer 
+              VideoData={selectedSong} 
+              index={selectedSongIndex}
+              isPlaying={playerState.playing}
+            />
+        </div>
+      )}
+
       </Container>
 
       {
