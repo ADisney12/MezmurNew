@@ -106,7 +106,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     width: '100%',
     [theme.breakpoints.up('sm')]: {
       width: '12ch',
-      '&:hover': {
+      '&:focus': {
         width: '20ch',
       },
     },
@@ -150,7 +150,7 @@ export default function ToolBar() {
   
   return (
     <Box sx={{ flexGrow: 1 }} class = "Mezmur">
-      <AppBar position="static" sx={{backgroundColor: "#0CB4CF"}}>
+      <AppBar position="static" sx={{backgroundColor: "#10345c"}}>
         <Toolbar>
         <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -228,7 +228,7 @@ export default function ToolBar() {
           </Search>
           <Box>
           <StyledButton onClick={SearchFunc}
-            sx={{ mt: 3, mb: 2, backgroundColor: "#10ACC5", height: 60, marginBottom: 3 }}>
+            sx={{ mt: 3, mb: 2, backgroundColor: "#1a2256", height: 60, marginBottom: 3 }}>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>

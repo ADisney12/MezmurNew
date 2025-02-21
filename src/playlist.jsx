@@ -5,6 +5,8 @@ import PauseIcon from '@mui/icons-material/Pause';
 import { GlobalContext } from "./GlobalData";
 import ToolBar from "./appBar"
 import ReactPlayer from 'react-player';
+import VideoPlayer from './utills/VideoPlayer';
+
 import { Button, Card, CardActions, CardContent, CardMedia, Typography, styled, createTheme, Container, AppBar, TextField, CircularProgress, Stack, Box} from "@mui/material";
 const apiUrl = import.meta.env.VITE_API_URL;
 const StyledPlayCircleIcon = styled(PlayCircleIcon)(({ theme }) => ({
@@ -17,9 +19,11 @@ const StyledPlayCircleIcon = styled(PlayCircleIcon)(({ theme }) => ({
 
 
 export default function Playlist() {
-   const [selectedSong, setSelectedSong] = useState(null); // New state to hold selected song data
+  const [selectedSong, setSelectedSong] = useState(null); // New state to hold selected song data
   const [playlist, setPlaylist] = useState(null);
+  const [selectedSongData, setSelectedSongData] = useState(null); // New state to hold selected song data
   const [playIndex, setPlayIndex] = useState(null);
+  const [list, setlist] = useState(null); // State to hold the next song data
   const [pausedTimes, setPausedTimes] = useState({});
   const [playerUrl, setPlayerUrl] = useState(null);
   const [playerState, setPlayerState] = useState({ playing: false, played: 0 });
@@ -54,17 +58,18 @@ export default function Playlist() {
       playlist["list"].map((e, index) => (
         <Box
         sx={{
-          border: index == playIndex ? "1px solid #13DD36" : "1px solid black",
+          border: index == playIndex ?"1px solid #13DD36" : "1px solid black",
           borderRadius: '8px',     
           padding: '3px',  
+          borderColor:index === playIndex ? "#13DD36" : "#1e4371",
           marginBottom:'2%',
-          color: index === playIndex ? "#13DD36" : "black"
+          color: index === playIndex ? "#13DD36" : "#b9c3d2"
                   
         }}
       >
           {playIndex != index ? (
                 <>
-                  <StyledPlayCircleIcon  onClick={() => handleCardClick(index)} sx={{
+                  <StyledPlayCircleIcon  onClick={() => handleCardClick(e, index)} sx={{
                 fontSize:"4vh",
                 //  display:"inline",
                 marginLeft:"90%",
@@ -78,7 +83,7 @@ export default function Playlist() {
               
                 marginLeft:"90%",
                   marginBottom:'2%'        
-                }} onClick={() => handleCardClick(index)} />
+                }} onClick={() => handleCardClick(e, index)} />
                 </>
               )}
         <Typography sx ={{marginTop:"0%", fontSize:"1.5rem"}}>{e.title}</Typography>
@@ -88,26 +93,28 @@ export default function Playlist() {
     )
   }
   
-  const handleCardClick = (index) => {
-    const videoId = playlist["list"]
+
+  const handleCardClick = (e, index) => {
+    console.log(e);
+    setSelectedSong(e);
     if (playIndex === index) {
       setPlayerState(prevState => ({
         ...prevState,
         playing: false,
         played: playerState.played,
       }));
-      setPausedTimes({
-        ...pausedTimes,
+      setPausedTimes(prev => ({
+        ...prev,
         [index]: playerState.playedSeconds,
-      });
+      }));
       setPlayIndex(null);
     } else {
       setPlayIndex(index);
       setPlayerUrl(playlist["list"][index]["url"]);
-      console.log(playlist["list"][index]["url"]);
       setPlayerState({
         playing: true,
         played: pausedTimes[index] || 0,
+        playedSeconds: pausedTimes[index] || 0
       });
     }
   };
@@ -117,99 +124,73 @@ export default function Playlist() {
   
   }, [GlobalData, params.name]); 
 
+  const handleVideoEnd = () => {
+      setPlayIndex(playIndex + 1);
+    // Perform any actions needed when the video ends
+  };
+
   return (
     <div>
-          <Container maxWidth={false} sx={{backgroundColor:"#D2FFFC", width: "100%",  minHeight: "100vh", padding: 0}}>
+      <Container maxWidth={false} sx={{ backgroundColor:"#041b3b", width: "100%",  minHeight: "100vh", padding: 0}}>
+        <ToolBar/>
 
-     <ToolBar/>
+        {selectedSong && (
+          <Box sx={{ width: "100%" }}>
+            <VideoPlayer 
 
-       
-
-        {playerUrl && (
-                    <Box sx={{ width: "100%" }}>
-                      
-                    </Box>
-                  )}
-          {playlist ? (
+              VideoData={selectedSong} 
+              listData={playlist["list"]}
+              index={playIndex}
+              isPlaying={playerState.playing}
+              sx={{ backgroundColor:"#103359", zIndex: 1, position: 'absolute' }} 
+              onVideoEnd={handleVideoEnd}
+            />
+          </Box>
+        )}
+        {playlist ? (
           <div style={{paddingTop: "20%"}}>
-          
-             <Card sx={{
-               width: "90%", 
-               marginLeft: "5%",
-               marginTo: "20px",
-               marginBottom: "20px",
-               borderRadius: "15px",
-               boxShadow: "0 3px 8px rgba(1,0,0,0.4)",
-               padding: "5% 4% 2% 4%",
-               marginTop: "-15%" // Added negative margin to move card up
-             }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '8%', marginTop: '%' }}>
-                  <Typography height={30} gutterBottom variant="h1" component="div" class="Ysabeau" sx={{ fontSize:"3rem", marginRight: "1%" }}>
-                    {playlist["Name"]}
-                  </Typography>
-                  <PlayCircleIcon onClick={() => {
-                    setPlayIndex(0);
-                    setPlayerUrl(playlist["list"][0]["url"]);
-                    console.log(playlist["list"][0]["url"]);
-                    setPlayerState({
-                      playing: true,
-                      played: pausedTimes[0] || 0,
-                    });
-                  }} sx={{
-                    borderRadius: "25px",
-                    transition: "transform 0.10s ease-in-out",
-                    fontSize:"6vh",
-                    marginLeft: "15px",
-                    marginBottom: 0,
-                    "&:hover": { transform: "scale3d(1.3, 1.3, 1)", Opacity: ".8", boxShadow: '1px 2px 9px #F4AAB9' },
-                  }}/>
-                </Box>
-              <MapPlaylist sx={{marginTop:"10%"}}/>
-             </Card>
-            
+            <Card sx={{
+              width: "90%", 
+              marginLeft: "5%",
+              marginTo: "20px",
+              marginBottom: "20px",
+              borderRadius: "15px",
+              boxShadow: "0 3px 8px rgba(1,0,0,0.4)",
+              padding: "5% 4% 2% 4%",
+              backgroundColor:"#082b52",
+              color: "b9c3d2",
+              marginTop: "-15%" // Added negative margin to move card up
+            }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '8%', marginTop: '%' , color: "white",}}>
+                <Typography height={30} gutterBottom variant="h1" component="div" class="Ysabeau" sx={{ fontSize:"3rem", marginRight: "1%" }}>
+                  {playlist["Name"]}
+                </Typography>
+                <PlayCircleIcon onClick={() => {
+                  console.log(playlist["list"][0]);
+                  setSelectedSong(playlist["list"][0]);
+                  setPlayIndex(0);
+                  setPlayerUrl(playlist["list"][0]["url"]);
+                  console.log(playlist["list"][0]);
+                  setPlayerState({
+                    playing: true,
+                    played: pausedTimes[0] || 0,
+                  });
+                }} sx={{
+                  borderRadius: "25px",
+                  transition: "transform 0.10s ease-in-out",
+                  fontSize:"6vh",
+                  marginLeft: "15px",
+                  marginBottom: 0,
+                  "&:hover": { transform: "scale3d(1.3, 1.3, 1)", Opacity: ".8", boxShadow: '1px 2px 9px #F4AAB9' },
+                }}/>
+              </Box>
+              <MapPlaylist sx={{marginTop:"10%", color: "b9c3d2"}}/>
+            </Card>
           </div>
         ) : (
           <p>Loading Playlist...</p>
         )}
-        <ReactPlayer
-                        url={playerUrl}
-                        playing={playerState.playing}
-                        controls
-                        width={"0%"}
-                        height="0%"
-                        onProgress={({ playedSeconds }) => {
-                          setPlayerState(prevState => ({
-                            ...prevState,
-                            playedSeconds,
-                          }));
-                        }}
-                        onPause={() => {
-                          setPlayerState(prevState => ({
-                            ...prevState,
-                            playing: false,
-                          }));
-                        }}
-                        onPlay={() => {
-                          setPlayerState(prevState => ({
-                            ...prevState,
-                            playing: true,
-                          }));
-                        
-                        }}
-                        onEnded={() => {
-                          const nextIndex = (playIndex + 1) % playlist["list"].length;
-                          setPlayIndex(nextIndex);
-                          setPlayerUrl(playlist["list"][nextIndex]["url"]);
-                          setPlayerState({
-                            playing: true,
-                            played: 0,
-                          });
-                        }}
-                      />
       </Container>
-      
     </div>
-    
-  
   );
 }

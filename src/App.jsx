@@ -91,7 +91,7 @@ const ChangeSceenState = () => {
     }
     return (
       Data.map((e, index) => (
-      <StyledCard onClick={ () => {PlaylistClicked(e.Name)}} sx={{ minWidth: "15%",minHeight:"40%", marginRight:"2%", height: 200, display:"inline-block" }}>
+      <StyledCard onClick={ () => {PlaylistClicked(e.Name)}} sx={{ minWidth: "15%",minHeight:"40%", marginRight:"2%", height: 200, display:"inline-block", backgroundColor:"#435b7d", color:"white" }}>
       
         <CardContent>
             <Typography gutterBottom variant="h5" component="div">
@@ -109,17 +109,17 @@ const ChangeSceenState = () => {
 
     return(
       <div>
-        <Container maxWidth={false} sx={{backgroundColor:"#D2FFFC", width: "100%",  height: "100vh", opacity:  AddPlaylistScreen ? 0.7 : 1}}>
+        <Container maxWidth={false} sx={{backgroundColor:"#071a34", width: "100%",  height: "100vh", opacity:  AddPlaylistScreen ? 0.7 : 1}}>
 
         <ToolBar/>
-          <Card sx ={{boxShadow: '3px 3px 9px #BFC6CD', maxWidth: "70%", borderRadius: 10, marginLeft: 6, paddingLeft: 4, marginTop: 15, paddingBottom:10}}  >
+          <Card sx ={{boxShadow: '3px 3px 9pxrgb(144, 134, 208)', backgroundColor:"#183b63", color:"white", maxWidth: "70%", borderRadius: 10, marginLeft: 6, paddingLeft: 4, marginTop: 15, paddingBottom:10}}  >
               <Typography height={30} gutterBottom variant="h3" component="div" class = "Ysabeau">
                 Playlists
               </Typography>
               {Data !== null ? (
                 <div>
               <MapPlaylists/>
-              <StyledCard onClick ={ChangeSceenState} sx={{ height: 200, display:"inline-block" }}>
+              <StyledCard onClick ={ChangeSceenState} sx={{ height: 200, display:"inline-block", backgroundColor:"#435b7d", color:"white" }}>
 
                 <CardContent sx={{ marginBottom:"90px"}}>
                   <AddIcon sx={{fontSize:"7vh", marginLeft:"15%", marginTop:"30%"}}/>
