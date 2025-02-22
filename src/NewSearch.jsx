@@ -80,39 +80,35 @@ export default function Search() {
   }, [selectedSong]);
 
   const handleCardClick = (e, index) => {
-    console.log(e);
-    setSelectedSong(e);
-    setSelectedSong(e);
-    const videoId = data[index].url.split('v=')[1]?.split('&')[0];
-    if (playIndex === index) {
-      setPlayerState(prevState => ({
-        ...prevState,
-        playing: false,
-        played: playerState.played,
-      }));
-      setPausedTimes(prev => ({
-        ...prev,
-        [index]: playerState.playedSeconds,
-      }));
-      setPlayIndex(null);
-    } else {
-      setPlayerState({
-        playing: false,
-        played: pausedTimes[index] || 0,
-        playedSeconds: pausedTimes[index] || 0
-      });
-      setPlayIndex(index);
-      setPlayerUrl(`https://www.youtube.com/watch?v=${videoId}`);
+    console.log("Card clicked:", index); // Log the index of the clicked card
+    console.log("Current playIndex:", playIndex); // Log the current playIndex
 
-      // Use a callback to ensure the state is updated before playing
-      setTimeout(() => {
+    const videoId = data[index]?.url.split('v=')[1]?.split('&')[0]; // Use optional chaining to avoid errors
+
+    if (playIndex == index) {
+        console.log("Toggling play/pause for the same video."); // Log when toggling play/pause
         setPlayerState(prevState => ({
-          ...prevState,
-          playing: true,
-          played: pausedTimes[index] || 0,
-          playedSeconds: pausedTimes[index] || 0
+            ...prevState,
+            playing: !prevState.playing, // Toggle play/pause
+            played: playerState.played,
         }));
-      }, 0);
+        setPausedTimes(prev => ({
+            ...prev,
+            [index]: playerState.playedSeconds,
+        }));
+    } else {
+        console.log("Playing a new video."); // Log when playing a new video
+        setPlayIndex(index);
+        setSelectedSongIndex(index); // Update the index of the selected song
+        setSelectedSong(data[index]); // Set the selected song to the new video
+
+        setPlayerState({
+            playing: true, // Start playing the new video
+            played: 0, // Reset played time for the new video
+            playedSeconds: 0 // Reset played seconds for the new video
+        });
+    
+        setPlayerUrl(`https://www.youtube.com/watch?v=${videoId}`);
     }
   };
 
@@ -139,7 +135,7 @@ export default function Search() {
 
     return (
       data.map((e, index) => (
-        <StyledCard sx={{ position: 'relative', display: 'flex', width: "50%", minWidth:"2in", marginBottom: "10%", marginLeft: "10%" }} key={e.url}>
+        <StyledCard onClick={(e) => handleCardClick(e, index)} key={e.url} sx={{boxShadow: index == playIndex ? '0 20px 20px rgba(121, 222, 98, 0.2)' : '0 0px 0px rgba(65, 125, 51, 0.2)', position: 'relative', display: 'flex', width: "50%", minWidth:"2in", marginBottom: "10%", marginLeft: "10%"  }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', opacity:"100%"}}>
           
             <Box sx={{ position: 'absolute', top: 40, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -151,7 +147,7 @@ export default function Search() {
                 {e.author.name}
               </Typography>
             </CardContent>
-              {playIndex === index ? (
+              {playIndex == index ? (
                 <>
                   <PauseIcon sx={{ fontSize: "50px", zIndex: 2 }} onClick={() => handleCardClick(e, index)} />
                   <AddIcon
@@ -205,35 +201,7 @@ export default function Search() {
               Songs
             </Typography>
             <MapElements />
-          {playerUrl && (
-            <Box sx={{ width: "100%" }}>
-              {/* <ReactPlayer
-                url={playerUrl}
-                playing={playerState.playing}
-                controls
-                width="0%"
-                height="auto"
-                onProgress={({ playedSeconds }) => {
-                  setPlayerState(prevState => ({
-                    ...prevState,
-                    playedSeconds,
-                  }));
-                }}
-                onPause={() => {
-                  setPlayerState(prevState => ({
-                    ...prevState,
-                    playing: false,
-                  }));
-                }}
-                onPlay={() => {
-                  setPlayerState(prevState => ({
-                    ...prevState,
-                    playing: true,
-                  }));
-                }}
-              /> */}
-            </Box>
-          )}
+         
 
 {selectedSong != null && (
         <div 
@@ -241,12 +209,15 @@ export default function Search() {
             onMouseEnter={() => setIsHovered(true)} // Set hover state to true
             onMouseLeave={() => setIsHovered(false)} // Set hover state to false
         >
-            <VideoPlayer 
-                VideoData={selectedSong} 
-                index={selectedSongIndex}
-                isPlaying={playerState.playing}
-                sx={{ backgroundColor:"#103359", zIndex: 1, position: 'absolute' }} 
-            />
+          <VideoPlayer 
+            key={playerUrl} // Ensures ReactPlayer reloads when URL changes
+            VideoData={selectedSong} 
+            index={selectedSongIndex}
+            isPlaying={playerState.playing}
+            listData={data}
+            sx={{ backgroundColor:"#103359", zIndex: 1, position: 'absolute' }} 
+        />
+
         
         </div>
       )}
