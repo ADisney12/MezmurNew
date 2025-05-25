@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Container, TextField, Box, Button, Card, Typography, styled, createTheme, CardContent, CardMedia } from "@mui/material";
+import { Container, TextField, Box, Button, Card, Typography, styled, createTheme, CardContent, CardMedia, CircularProgress } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import Stack from '@mui/material/Stack';
 import PlayCircleIcon from '@mui/icons-material/PlayCircleFilledWhiteTwoTone';
@@ -79,7 +79,26 @@ export default function Search() {
     console.log(selectedSong);
   }, [selectedSong]);
 
-  const handleCardClick = (e, index) => {
+  const handleCardClick = (e, index, state = null) => {
+
+    if(state != null){
+      if(state){
+        setPlayerState(prevState => ({
+          ...prevState,
+          playing: true, // Toggle play/pause
+          played: playerState.played,
+      })
+    );
+  }
+  if(state){
+    setPlayerState(prevState => ({
+      ...prevState,
+      playing: true, // Toggle play/pause
+      played: playerState.played,
+  })
+    )
+  }
+}
     console.log("Card clicked:", index); // Log the index of the clicked card
     console.log("Current playIndex:", playIndex); // Log the current playIndex
 
@@ -118,59 +137,79 @@ export default function Search() {
   }
 
   const ChangeSceenState = (e, index) => {
-    console.log(e);
-    setSelectedSong(e); // Set the selected song
-    setSelectedSongIndex(index); 
+   
     setPlaylistScreen(true); // Open the AddToPlaylist screen
   }
 
   const MapElements = () => {
     if (loading) {
-      return <div>Loading...</div>;
+      return <CircularProgress sx={{marginLeft:"10%"}} />;
     }
 
-    if (!data) {
-      return null;
+    if (!data || data.length === 0) {
+      return (
+        <Box sx={{ marginLeft: "0%", color: "white", height: "100vh", fontSize: "25px" }}>
+          <Typography sx={{ marginLeft: "5%", marginTop: "5%", color: "white", fontSize: "25px" }}>No songs found</Typography>
+          <Box sx={{ width: "100%", height: "2px", backgroundColor: "white", marginTop: "2%", marginBottom: "2%" }} />
+          <Typography sx={{ marginLeft: "5%", marginTop: "5%", fontFamily: "Ysabeau", color: "white", fontSize: "25px" }}>
+            Try searching for something else
+          </Typography>
+        </Box>
+      );
     }
 
     return (
       data.map((e, index) => (
-        <StyledCard onClick={(e) => handleCardClick(e, index)} key={e.url} sx={{boxShadow: index == playIndex ? '0 20px 20px rgba(121, 222, 98, 0.2)' : '0 0px 0px rgba(65, 125, 51, 0.2)', position: 'relative', display: 'flex', width: "50%", minWidth:"2in", marginBottom: "10%", marginLeft: "10%"  }}>
+        <StyledCard onClick={(e) => handleCardClick(e, index)} key={e.url} sx={{
+            boxShadow: index == playIndex ? '0 20px 20px rgba(121, 222, 98, 0.2)' : '0 0px 0px rgba(65, 125, 51, 0.2)', 
+            position: 'relative', 
+            display: 'flex', 
+            width: "40%", 
+            minWidth:"2in", 
+            marginBottom: index === data.length - 1 ? "0%" : "10%", 
+            marginLeft: "10%"  
+        }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', opacity:"100%"}}>
           
-            <Box sx={{ position: 'absolute', top: 40, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <CardContent sx={{ flex: '1 0 auto', color:"white" }}>
-              <Typography component="div" variant="h7" sx={{opacity:"100%", color:"gray"}}>
-                {e.title}
-              </Typography>
-              <Typography variant="subtitle1" color="text.secondary" component="div" sx={{color:"gray"}}>
-                {e.author.name}
-              </Typography>
-            </CardContent>
-              {playIndex == index ? (
-                <>
-                  <PauseIcon sx={{ fontSize: "50px", zIndex: 2 }} onClick={() => handleCardClick(e, index)} />
-                  <AddIcon
-                  onClick={() => ChangeSceenState(e, index)}
-                    sx={{
-                      fontSize: "50px", ml: 2, borderRadius: "25px", transition: "transform 0.10s ease-in-out",
-                      "&:hover": { transform: "scale(1.3, 1.3)", Opacity: ".8", boxShadow: '1px 2px 9px #F4AAB9',  },
-                      zIndex: 2
-                    }}
-                  />
-                </>
-              ) : (
-                <>
-                  <StyledIcon sx={{ fontSize: "50px", zIndex: 2 }} onClick={() => handleCardClick(e, index)} />
-                  <AddIcon
-                    onClick={() => ChangeSceenState(e, index)} // Pass the song data when clicking Add
-                    sx={{
-                      fontSize: "50px", ml: 2, zIndex: 2 , borderRadius: "25px", transition: "transform 0.10s ease-in-out",
-                      "&:hover": { transform: "scale(1.3, 1.3)", Opacity: ".8", boxShadow: '1px 2px 9px #F4AAB9' },
-                    }}
-                  />
-                </>
-              )}
+            <Box sx={{ 
+              position: 'absolute', 
+              top: 40, 
+              left: 0, 
+              right: 0, 
+              bottom: 0, 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'space-between',
+              padding: '0 20px'
+            }}>
+              <CardContent sx={{ flex: '1 0 auto', color:"white", maxWidth: '60%' }}>
+                <Typography component="div" variant="h7" sx={{opacity:"100%", color:"gray"}}>
+                  {e.title}
+                </Typography>
+                <Typography variant="subtitle1" color="text.secondary" component="div" sx={{color:"gray"}}>
+                  {e.author.name}
+                </Typography>
+              </CardContent>
+              <Box sx={{ display: 'flex', gap: 2, position: 'absolute', right: 20 }}>
+                {playIndex == index ? (
+                  <PauseIcon sx={{ fontSize: "50px", zIndex: 2 }} onClick={() => handleCardClick(e, index, true)} />
+                ) : (
+                  <StyledIcon sx={{ fontSize: "50px", zIndex: 2 }} onClick={() => handleCardClick(e, index, false)} />
+                )}
+                <AddIcon
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    ChangeSceenState(e, index);
+                  }}
+                  sx={{
+                    fontSize: "50px",
+                    borderRadius: "25px",
+                    transition: "transform 0.10s ease-in-out",
+                    "&:hover": { transform: "scale(1.3, 1.3)", Opacity: ".8", boxShadow: '1px 2px 9px #F4AAB9' },
+                    zIndex: 2
+                  }}
+                />
+              </Box>
             </Box>
           </Box>
           <CardMedia
@@ -192,9 +231,21 @@ export default function Search() {
         );
       };
 
+  const handleVideoEnd = () => {
+    if (playIndex !== null && playIndex < data.length - 1) {
+      // Move to next video
+      handleCardClick(null, playIndex + 1);
+    } else {
+      // Reset player state if it's the last video
+      setPlayIndex(null);
+      setPlayerState({ playing: false, played: 0 });
+      setSelectedSong(null);
+    }
+  };
+
   return (
     <div>
-      <Container maxWidth={false} maxHeight={false} sx={{ opacity: AddToPlaylistScreen ? 0.5 : 1, backgroundColor:"#041b3b", height: !loading ? "100%" : "100vh", color:"white" }}>
+      <Container maxWidth={false} maxHeight={false} sx={{ opacity: AddToPlaylistScreen ? 0.5 : 1, backgroundColor:"#041b3b", height: !loading ? "105%" : "100vh", color:"white", paddingBottom:"10%" }}>
         <ToolBar/>
       
             <Typography height={30} gutterBottom variant="h3" component="div" class="Ysabeau">
@@ -215,7 +266,8 @@ export default function Search() {
             index={selectedSongIndex}
             isPlaying={playerState.playing}
             listData={data}
-            sx={{ backgroundColor:"#103359", zIndex: 1, position: 'absolute' }} 
+            onVideoEnd={handleVideoEnd}
+            sx={{ backgroundColor:"#103359", zIndex: 1, position: 'absolute', marginTop:"10%" }} 
         />
 
         

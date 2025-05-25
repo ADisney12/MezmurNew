@@ -63,6 +63,8 @@ const VideoPlayer = ({ VideoData, index, isPlaying, listData, onVideoEnd }) => {
         setPercentage(0);
       }, 100);
       onVideoEnd();
+    } else {
+      onVideoEnd();
     }
   };
 
