@@ -6,7 +6,8 @@ import { Box, Typography, LinearProgress } from '@mui/material';
 import FastForwardIcon from '@mui/icons-material/FastForward';
 import FastRewindIcon from '@mui/icons-material/FastRewind';
 
-const VideoPlayer = ({ VideoData, index, isPlaying, listData, onVideoEnd }) => {
+
+const VideoPlayer = ({ VideoData, index, isPlaying, listData, onVideoEnd, onVideoPrev }) => {
   const playerRef = useRef(null);
   const [playerState, setPlayerState] = useState({ playing: false, played: 0, playedSeconds: 0 });
   const [playerUrl, setPlayerUrl] = useState(null);
@@ -68,6 +69,42 @@ const VideoPlayer = ({ VideoData, index, isPlaying, listData, onVideoEnd }) => {
     }
   };
 
+  const handleSkipNext = () => {
+    if (!listData) return;
+    if (playerindex + 1 < listData.length) {
+      if (playerRef.current) {
+        playerRef.current.seekTo(0);
+      }
+      setPlayerState(prevState => ({ ...prevState, playing: false }));
+      setTimeout(() => {
+        setPlayerUrl(listData[playerindex + 1]["url"]);
+        setPlayerindex(playerindex + 1);
+        setvideoData(listData[playerindex + 1]);
+        setPlayerState(prevState => ({ ...prevState, playing: true }));
+        setPercentage(0);
+      }, 100);
+      if (onVideoEnd) onVideoEnd();
+    }
+  };
+
+  const handleSkipPrev = () => {
+    if (!listData) return;
+    if (playerindex - 1 >= 0) {
+      if (playerRef.current) {
+        playerRef.current.seekTo(0);
+      }
+      setPlayerState(prevState => ({ ...prevState, playing: false }));
+      setTimeout(() => {
+        setPlayerUrl(listData[playerindex - 1]["url"]);
+        setPlayerindex(playerindex - 1);
+        setvideoData(listData[playerindex - 1]);
+        setPlayerState(prevState => ({ ...prevState, playing: true }));
+        setPercentage(0);
+      }, 100);
+      if (onVideoPrev) onVideoPrev();
+    }
+  };
+
   return (
     <div className="video-player">
       <Box sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, backgroundColor: '#103359', p: 1, boxShadow: 3, height: "14%", color: "white" }}>
@@ -79,19 +116,63 @@ const VideoPlayer = ({ VideoData, index, isPlaying, listData, onVideoEnd }) => {
             <Typography variant="h8" sx={{ position: 'absolute', top: '30px' }}>{videoData["author"]["name"]}</Typography>
           )}
         </Box>
-        <FastRewindIcon sx={{ position: "absolute", top: "25%", left: "45%", fontSize: "50px", transform: "translate(-50%, -50%)" }} />
+        <FastRewindIcon 
+          onClick={handleSkipPrev}
+          sx={{ 
+            position: "absolute", 
+            top: "25%", 
+            left: "45%", 
+            fontSize: "50px", 
+            transform: "translate(-50%, -50%)", 
+            cursor: 'pointer',
+            transition: 'filter 0.2s ease',
+            '&:hover': { filter: 'drop-shadow(0 0 6px rgba(255,255,255,0.6))' }
+          }} 
+        />
         {playerState.playing ? (
           <PauseIcon
             onClick={handleCardClick}
-            sx={{ fontSize: "50px", textAlign: "center", position: "absolute", top: "25%", left: "50%", transform: "translate(-50%, -50%)" }}
+            sx={{ 
+              fontSize: "50px", 
+              textAlign: "center", 
+              position: "absolute", 
+              top: "25%", 
+              left: "50%", 
+              transform: "translate(-50%, -50%)",
+              cursor: 'pointer',
+              transition: 'filter 0.2s ease',
+              '&:hover': { filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.75))' }
+            }}
           />
         ) : (
           <PlayCircleIcon
             onClick={handleCardClick}
-            sx={{ fontSize: "50px", textAlign: "center", position: "absolute", top: "25%", left: "50%", transform: "translate(-50%, -50%)" }}
+            sx={{ 
+              fontSize: "50px", 
+              textAlign: "center", 
+              position: "absolute", 
+              top: "25%", 
+              left: "50%", 
+              transform: "translate(-50%, -50%)",
+              cursor: 'pointer',
+              transition: 'filter 0.2s ease',
+              '&:hover': { filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.75))' }
+            }}
           />
         )}
-        <FastForwardIcon sx={{ position: "absolute", top: "25%", left: "55%", fontSize: "50px", transform: "translate(-50%, -50%)" }} />
+        <FastForwardIcon 
+          onClick={handleSkipNext} 
+          sx={{ 
+            position: "absolute", 
+            top: "25%", 
+            left: "55%", 
+            fontSize: "50px", 
+            transform: "translate(-50%, -50%)", 
+            cursor: 'pointer',
+            transition: 'filter 0.2s ease',
+            '&:hover': { filter: 'drop-shadow(0 0 6px rgba(255,255,255,0.6))' }
+          }} 
+        />
         <Box sx={{ cursor: 'pointer', padding: '8px 0' }}>
           <LinearProgress 
             onClick={handleProgressClick}

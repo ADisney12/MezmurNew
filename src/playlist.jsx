@@ -8,6 +8,8 @@ import ReactPlayer from 'react-player';
 import VideoPlayer from './utills/VideoPlayer';
 
 import { Button, Card, CardActions, CardContent, CardMedia, Typography, styled, createTheme, Container, AppBar, TextField, CircularProgress, Stack, Box} from "@mui/material";
+import FastForwardIcon from '@mui/icons-material/FastForward';
+import FastRewindIcon from '@mui/icons-material/FastRewind';
 const apiUrl = import.meta.env.VITE_API_URL;
 const StyledPlayCircleIcon = styled(PlayCircleIcon)(({ theme }) => ({
   borderRadius: "25px",
@@ -125,8 +127,28 @@ export default function Playlist() {
   }, [GlobalData, params.name]); 
 
   const handleVideoEnd = () => {
-      setPlayIndex(playIndex + 1);
-    // Perform any actions needed when the video ends
+    const nextIndex = (playIndex ?? -1) + 1;
+    setPlayIndex(nextIndex);
+    if (playlist && playlist["list"] && nextIndex < playlist["list"].length) {
+      setSelectedSong(playlist["list"][nextIndex]);
+      setPlayerUrl(playlist["list"][nextIndex]["url"]);
+    }
+  };
+
+  const handleSkipNext = () => {
+    if (!playlist || !playlist["list"]) return;
+    if (playIndex !== null && playIndex + 1 < playlist["list"].length) {
+      const nextIndex = playIndex + 1;
+      handleCardClick(playlist["list"][nextIndex], nextIndex);
+    }
+  };
+
+  const handleSkipPrev = () => {
+    if (!playlist || !playlist["list"]) return;
+    if (playIndex !== null && playIndex - 1 >= 0) {
+      const prevIndex = playIndex - 1;
+      handleCardClick(playlist["list"][prevIndex], prevIndex);
+    }
   };
 
   return (
@@ -137,13 +159,17 @@ export default function Playlist() {
         {selectedSong && (
           <Box sx={{ width: "100%" }}>
             <VideoPlayer 
-
               VideoData={selectedSong} 
               listData={playlist["list"]}
               index={playIndex}
               isPlaying={playerState.playing}
               sx={{ backgroundColor:"#103359", zIndex: 1, position: 'absolute' }} 
               onVideoEnd={handleVideoEnd}
+              onVideoPrev={() => {
+                if (playIndex !== null && playIndex > 0) {
+                  setPlayIndex(playIndex - 1);
+                }
+              }}
             />
           </Box>
         )}
@@ -183,6 +209,18 @@ export default function Playlist() {
                   marginBottom: 0,
                   "&:hover": { transform: "scale3d(1.3, 1.3, 1)", Opacity: ".8", boxShadow: '1px 2px 9px #F4AAB9' },
                 }}/>
+                {/* {playIndex !== null && (
+                  <>
+                    <FastRewindIcon 
+                      onClick={handleSkipPrev}
+                      sx={{ fontSize:"5vh", marginLeft: "10px", cursor: 'pointer' }}
+                    />
+                    <FastForwardIcon 
+                      onClick={handleSkipNext}
+                      sx={{ fontSize:"5vh", marginLeft: "10px", cursor: 'pointer' }}
+                    />
+                  </>
+                )} */}
               </Box>
               <MapPlaylist sx={{marginTop:"10%", color: "b9c3d2"}}/>
             </Card>

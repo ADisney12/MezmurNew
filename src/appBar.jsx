@@ -217,6 +217,12 @@ export default function ToolBar() {
           label="Password"
           > 
             <StyledInputBase 
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                event.preventDefault();
+                SearchFunc();
+              }
+            }}
             onChange={event => {
               SetSearch(event.target.value)
         

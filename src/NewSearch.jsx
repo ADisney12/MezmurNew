@@ -267,6 +267,11 @@ export default function Search() {
             isPlaying={playerState.playing}
             listData={data}
             onVideoEnd={handleVideoEnd}
+            onVideoPrev={() => {
+              if (playIndex !== null && playIndex > 0) {
+                handleCardClick(null, playIndex - 1);
+              }
+            }}
             sx={{ backgroundColor:"#103359", zIndex: 1, position: 'absolute', marginTop:"10%" }} 
         />
 
